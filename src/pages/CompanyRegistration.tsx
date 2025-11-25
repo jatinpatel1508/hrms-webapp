@@ -11,7 +11,6 @@ import {
   Grid,
 } from '@mui/material';
 import { companyService } from '../services/companyService';
-import { authService } from '../services/authService';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function CompanyRegistration() {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Grid, Paper, Typography, Card, CardContent, Alert } from '@mui/material';
+import { Box, Grid, Paper, Typography, Card, CardContent } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 import { timeLogService, TimeLog } from '../services/timeLogService';
 import { format, subDays } from 'date-fns';
@@ -19,7 +19,7 @@ export default function Dashboard() {
     loadData();
 
     // Listen for real-time updates
-    const handleTimeLogUpdate = (data: TimeLog) => {
+    const handleTimeLogUpdate = (_data: TimeLog) => {
       loadData(); // Reload data when time log is updated
     };
 
@@ -46,15 +46,15 @@ export default function Dashboard() {
       // Calculate stats
       const today = format(new Date(), 'yyyy-MM-dd');
       const todayLogs = logs.filter(
-        (log) => format(new Date(log.startTime), 'yyyy-MM-dd') === today
+        (log: TimeLog) => format(new Date(log.startTime), 'yyyy-MM-dd') === today
       );
-      const todaySeconds = todayLogs.reduce((sum, log) => sum + log.duration - log.idleTime, 0);
-      const weekSeconds = logs.reduce((sum, log) => sum + log.duration - log.idleTime, 0);
+      const todaySeconds = todayLogs.reduce((sum: number, log: TimeLog) => sum + log.duration - log.idleTime, 0);
+      const weekSeconds = logs.reduce((sum: number, log: TimeLog) => sum + log.duration - log.idleTime, 0);
 
       setStats({
         todayHours: todaySeconds / 3600,
         weekHours: weekSeconds / 3600,
-        activeProjects: new Set(logs.map((log) => log.projectId).filter(Boolean)).size,
+        activeProjects: new Set(logs.map((log: TimeLog) => log.projectId).filter(Boolean)).size,
       });
     } catch (error) {
       console.error('Error loading dashboard data:', error);

@@ -119,36 +119,54 @@ export default function Users() {
   const handleSubmit = async () => {
     try {
       setError('');
-      const submitData = { ...formData };
       
-      // Don't send password if editing and password is empty
-      if (editingUser && !submitData.password) {
-        delete submitData.password;
-      }
-
-      // For super admin creating new user, companyId is required
-      if (!editingUser && currentUser?.role === 'super_admin' && !submitData.companyId) {
-        setError('Company selection is required');
-        return;
-      }
-
-      // For non-super admin, don't send companyId (it will use their company)
-      if (currentUser?.role !== 'super_admin') {
-        delete submitData.companyId;
-      } else if (editingUser && !submitData.companyId) {
-        // For super admin editing, if companyId is not provided, don't send it (keep existing)
-        delete submitData.companyId;
-      }
-
       if (editingUser) {
-        await userService.update(editingUser.id, submitData);
+        // For update, use Partial<CreateUserData>
+        let updateData: Partial<CreateUserData>;
+        if (!formData.password) {
+          const { password, ...dataWithoutPassword } = formData;
+          updateData = dataWithoutPassword;
+        } else {
+          updateData = { ...formData };
+        }
+
+        // For non-super admin, don't send companyId (it will use their company)
+        if (currentUser?.role !== 'super_admin') {
+          const { companyId, ...dataWithoutCompanyId } = updateData;
+          updateData = dataWithoutCompanyId;
+        } else if (!updateData.companyId) {
+          // For super admin editing, if companyId is not provided, don't send it (keep existing)
+          const { companyId, ...dataWithoutCompanyId } = updateData;
+          updateData = dataWithoutCompanyId;
+        }
+
+        await userService.update(editingUser.id, updateData);
       } else {
+        // For create, use CreateUserData (all required fields must be present)
         // Password is required for new users
-        if (!submitData.password) {
+        if (!formData.password) {
           setError('Password is required for new users');
           return;
         }
-        await userService.create(submitData);
+
+        // For super admin creating new user, companyId is required
+        if (currentUser?.role === 'super_admin' && !formData.companyId) {
+          setError('Company selection is required');
+          return;
+        }
+
+        const createData: CreateUserData = {
+          email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          role: formData.role,
+          ...(currentUser?.role === 'super_admin' && formData.companyId && { companyId: formData.companyId }),
+          ...(formData.hourlyRate && { hourlyRate: formData.hourlyRate }),
+          ...(formData.isActive !== undefined && { isActive: formData.isActive }),
+        };
+
+        await userService.create(createData);
       }
       handleCloseDialog();
       loadUsers();
