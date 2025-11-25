@@ -11,10 +11,6 @@ import {
   Paper,
   Button,
   TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
 } from '@mui/material';
 import { payrollService, PayrollRecord } from '../services/payrollService';
 import { format } from 'date-fns';

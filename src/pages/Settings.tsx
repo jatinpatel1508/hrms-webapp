@@ -27,15 +27,15 @@ export default function Settings() {
 
   const loadSettings = async () => {
     try {
-      const keys = Object.keys(settings);
+      const keys = Object.keys(settings) as Array<keyof typeof settings>;
       const values = await Promise.all(
         keys.map((key) => api.get(`/settings/${key}/value`)),
       );
-      const newSettings: any = {};
+      const newSettings: Record<string, string> = {};
       keys.forEach((key, index) => {
         newSettings[key] = values[index].data || settings[key];
       });
-      setSettings(newSettings);
+      setSettings(newSettings as typeof settings);
     } catch (error) {
       console.error('Error loading settings:', error);
     }

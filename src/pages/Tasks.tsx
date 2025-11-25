@@ -163,19 +163,6 @@ export default function Tasks() {
     }
   };
 
-  const getStatusColor = (status: TaskStatus) => {
-    switch (status) {
-      case TaskStatus.COMPLETED:
-        return 'success';
-      case TaskStatus.IN_PROGRESS:
-        return 'primary';
-      case TaskStatus.CANCELLED:
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
-
   const getPriorityColor = (priority: TaskPriority) => {
     switch (priority) {
       case TaskPriority.HIGH:

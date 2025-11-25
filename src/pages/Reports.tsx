@@ -12,12 +12,6 @@ import {
   InputLabel,
   Card,
   CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
 } from '@mui/material';
 import { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import {
@@ -462,7 +456,7 @@ export default function Reports() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {projectChartData.map((entry, index) => (
+                  {projectChartData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
